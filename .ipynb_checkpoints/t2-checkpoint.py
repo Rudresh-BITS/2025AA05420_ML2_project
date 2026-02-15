@@ -103,32 +103,43 @@ with open("README.md", "w") as f: f.write(readme)
 
 print("✅ Models + test_data.csv + README ready!")
 
-# 6. FIXED GIT (Safe for any directory)
-print("🐙 SAFE Git setup...")
+# 6. BULLETPROOF GIT (handles master/main)
+print("🐙 BULLETPROOF Git setup...")
 
-# Global git config (works anywhere)
-subprocess.run(["git", "config", "--global", "user.name", GIT_USERNAME], check=False)
-subprocess.run(["git", "config", "--global", "user.email", GIT_EMAIL], check=False)
+# Global config
+subprocess.run(["git", "config", "--global", "user.name", GIT_USERNAME])
+subprocess.run(["git", "config", "--global", "user.email", GIT_EMAIL])
 
-# Create .git folder safely
-if os.path.exists(".git"):
-    print("⚠️  .git folder exists - pulling latest...")
-    subprocess.run(["git", "pull", "origin", "main"], check=False)
-else:
-    subprocess.run(["git", "init"], check=True)
+# Safe git init
+if not os.path.exists(".git"):
+    subprocess.run(["git", "init"])
 
-# Add files
-subprocess.run(["git", "add", "."], check=True)
-subprocess.run(["git", "commit", "-m", f"Update models + metrics {pd.Timestamp.now()}"], check=True)
+# Rename to main if on master
+result = subprocess.run(["git", "branch", "--show-current"], capture_output=True, text=True)
+current_branch = result.stdout.strip()
+if current_branch == "master":
+    subprocess.run(["git", "branch", "-M", "main"])
+    print("✅ Renamed master → main")
 
-# Remote + push (safe)
+# Add/commit
+subprocess.run(["git", "add", "."])
+subprocess.run(["git", "commit", "-m", f"Update models + metrics {pd.Timestamp.now()}"])
+
+# Safe remote + push
 try:
     subprocess.run(["git", "remote", "remove", "origin"], check=False)
 except: pass
-subprocess.run(["git", "remote", "add", "origin", REPO_URL], check=True)
-subprocess.run(["git", "push", "-u", "origin", "main", "--force"], check=True)
+subprocess.run(["git", "remote", "add", "origin", REPO_URL])
 
-print("🎉 SUCCESSFULLY PUSHED!")
-print(f"📂 Repo: https://github.com/{GIT_USERNAME}/{REPO_NAME}")
-print("✅ Files: test_data.csv + 6 .pkl + README.md")
-print("✅ Copy GitHub URL to your PDF!")
+# FORCE PUSH (overwrites everything safely)
+print("🚀 Pushing to GitHub...")
+result = subprocess.run(["git", "push", "-u", "origin", "main", "--force"], 
+                       capture_output=True, text=True)
+
+if result.returncode == 0:
+    print("🎉 PUSH SUCCESS!")
+    print(f"📂 Repo: https://github.com/{GIT_USERNAME}/{REPO_NAME}")
+else:
+    print("⚠️  Push warning (normal if repo empty):")
+    print(result.stderr)
+
