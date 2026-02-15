@@ -144,7 +144,7 @@ readme = f"""# Dow Jones ML Models
 for name, m in metrics.items():
     readme += f"| {name.replace('_',' ').title()} | {m['accuracy']:.3f} | {m['auc']:.3f} | {m['precision']:.3f} | {m['recall']:.3f} | {m['f1']:.3f} | {m['mcc']:.3f} |\n"
 
-readme += f"""| Streamlit App | [LIVE LINK](https://2025aa05420ml2project.streamlit.app/) |\n\n**Features**: {len(selected_features)} total | **Test**: {X_test.shape[0]} samples | **XGBoost Best** 🎯"""
+readme += f"""| Streamlit App | [LIVE LINK](https://2025aa05420ml2project.streamlit.app/) |\n\n**Features**: {len(selected_features)} total | **Test**: {X_test.shape[0]} samples | **XGBoost Best** """
 
 with open("README.md", "w") as f: 
     f.write(readme)

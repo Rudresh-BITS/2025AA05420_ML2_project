@@ -25,4 +25,4 @@
 | Xgboost | 0.547 | 0.578 | 0.552 | 0.623 | 0.585 | 0.090 |
 | Streamlit App | [LIVE LINK](https://2025aa05420ml2project.streamlit.app/) |
 
-**Features**: 15 total | **Test**: 150 samples | **XGBoost Best** 🎯
+**Features**: 15 total | **Test**: 150 samples | **XGBoost Best** 
