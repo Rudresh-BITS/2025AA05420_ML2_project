@@ -128,11 +128,16 @@ subprocess.run(["git", "commit", "-m", f"Update models + metrics {pd.Timestamp.n
 # Safe remote + push
 try:
     subprocess.run(["git", "remote", "remove", "origin"], check=False)
-except: pass
+except: 
+    pass
+
 subprocess.run(["git", "remote", "add", "origin", REPO_URL])
 
-# FORCE PUSH (overwrites everything safely)
+# **FIXED: Use subprocess.run() with your PAT URL**
+PAT_URL = "https://Rudresh-BITS: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@github.com/Rudresh-BITS/2025AA05420_ML2_project.git"
+
 print("🚀 Pushing to GitHub...")
+result = subprocess.run(["git", "remote", "set-url", "origin", PAT_URL], check=True)
 result = subprocess.run(["git", "push", "-u", "origin", "main", "--force"], 
                        capture_output=True, text=True)
 
