@@ -113,9 +113,12 @@ if y_true is not None and len(y_true) == len(y_pred):
     }
     
     col1, col2, col3 = st.columns(3)
+    cols = [col1, col2, col3]
+    
     for idx, (metric, value) in enumerate(metrics_dict.items()):
-        with [col1, col2, col3][idx]:
+        with cols[idx % 3]:
             st.metric(metric, f"{value:.3f}")
+
 
     # Confusion Matrix
     st.subheader("📊 Confusion Matrix")
