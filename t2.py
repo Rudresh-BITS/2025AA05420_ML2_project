@@ -122,22 +122,37 @@ for name, model in models.items():
 # README
 readme = f"""# Dow Jones ML Models
 
-## Metrics
-| Model | Acc | AUC | Prec | Rec | F1 | MCC |
-|-------|----|-----|------|-----|----|-----|
+## a. Problem Statement
+**Predict weekly stock price direction** (Up/Down) for 30 Dow Jones stocks using historical OHLCV data.  
+**Target**: Binary classification on `percent_change_next_weeks_price > 0` (1=Up, 0=Down).  
+**Goal**: Build 6 ML models, evaluate on 20% test set, deploy via Streamlit. Real-world challenge: noisy markets beat random baseline (~50-55%) [web:44].
+
+## b. Dataset Description
+**Source**: Dow Jones Industrial Average (DJIA) daily prices (2011-2012?) [file:56].  
+**Shape**: ~7,500 rows × 16 columns.  
+**Key Features** (15 total post-engineering):
+- **Base (11)**: quarter, open, high, low, close, volume, percent_change_price, percent_change_volume_over_last_wk, previous_weeks_volume, days_to_next_dividend, percent_return_next_dividend
+- **Stock Dummies (4 top)**: stock_AXP, stock_BA, stock_BAC, stock_CAT (from ~30 unique stocks: AA, AXP, BA, BAC, CAT, CSCO, CVX, DD, DIS, GE, HD, HPQ, IBM, INTC, JNJ, JPM, KO, MCD, MMM, MRK, MSFT, PFE, PG, T, TRV, UTX, VZ, WMT, XOM)
+**Target**: percent_change_next_weeks_price (>0 = Up)  
+**Preprocessing**: Clean $, numeric coerce, median fillna, top-5 stock one-hot (drop_first=True).
+
+## Model Metrics (Test Set, 150 samples)
+| Model                | Acc   | AUC   | Prec  | Rec   | F1    | MCC   |
+|----------------------|-------|-------|-------|-------|-------|-------|
 """
 
 for name, m in metrics.items():
     readme += f"| {name.replace('_',' ').title()} | {m['accuracy']:.3f} | {m['auc']:.3f} | {m['precision']:.3f} | {m['recall']:.3f} | {m['f1']:.3f} | {m['mcc']:.3f} |\n"
 
-
+readme += f"""| Streamlit App | [LIVE LINK](https://2025aa05420ml2project.streamlit.app/) |\n\n**Features**: {len(selected_features)} total | **Test**: {X_test.shape[0]} samples | **XGBoost Best** 🎯"""
 
 with open("README.md", "w") as f: 
     f.write(readme)
 
-print("\n📊 ALL 6 MODEL METRICS:")
+print("\n✅ FULL README with Problem/Dataset/Metrics ready!")
+print("\n📊 Metrics Preview:")
 for name, m in metrics.items():
-    print(f"{name.title()}: Acc={m['accuracy']:.3f}, AUC={m['auc']:.3f}, F1={m['f1']:.3f}")
+    print(f"{name.title()}: {m}")
 
 # GIT (unchanged)
 print("🐙 Git setup...")

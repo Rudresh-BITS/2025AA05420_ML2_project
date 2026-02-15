@@ -1,11 +1,28 @@
 # Dow Jones ML Models
 
-## Metrics
-| Model | Acc | AUC | Prec | Rec | F1 | MCC |
-|-------|----|-----|------|-----|----|-----|
+## a. Problem Statement
+**Predict weekly stock price direction** (Up/Down) for 30 Dow Jones stocks using historical OHLCV data.  
+**Target**: Binary classification on `percent_change_next_weeks_price > 0` (1=Up, 0=Down).  
+**Goal**: Build 6 ML models, evaluate on 20% test set, deploy via Streamlit. Real-world challenge: noisy markets beat random baseline (~50-55%) [web:44].
+
+## b. Dataset Description
+**Source**: Dow Jones Industrial Average (DJIA) daily prices (2011-2012?) [file:56].  
+**Shape**: ~7,500 rows × 16 columns.  
+**Key Features** (15 total post-engineering):
+- **Base (11)**: quarter, open, high, low, close, volume, percent_change_price, percent_change_volume_over_last_wk, previous_weeks_volume, days_to_next_dividend, percent_return_next_dividend
+- **Stock Dummies (4 top)**: stock_AXP, stock_BA, stock_BAC, stock_CAT (from ~30 unique stocks: AA, AXP, BA, BAC, CAT, CSCO, CVX, DD, DIS, GE, HD, HPQ, IBM, INTC, JNJ, JPM, KO, MCD, MMM, MRK, MSFT, PFE, PG, T, TRV, UTX, VZ, WMT, XOM)
+**Target**: percent_change_next_weeks_price (>0 = Up)  
+**Preprocessing**: Clean $, numeric coerce, median fillna, top-5 stock one-hot (drop_first=True).
+
+## Model Metrics (Test Set, 150 samples)
+| Model                | Acc   | AUC   | Prec  | Rec   | F1    | MCC   |
+|----------------------|-------|-------|-------|-------|-------|-------|
 | Logistic Regression | 0.553 | 0.542 | 0.545 | 0.792 | 0.646 | 0.108 |
 | Decision Tree | 0.493 | 0.492 | 0.506 | 0.558 | 0.531 | -0.017 |
 | Knn | 0.467 | 0.454 | 0.482 | 0.519 | 0.500 | -0.070 |
 | Naive Bayes | 0.513 | 0.558 | 0.515 | 0.870 | 0.647 | 0.010 |
 | Random Forest | 0.447 | 0.448 | 0.465 | 0.519 | 0.491 | -0.112 |
 | Xgboost | 0.547 | 0.578 | 0.552 | 0.623 | 0.585 | 0.090 |
+| Streamlit App | [LIVE LINK](https://2025aa05420ml2project.streamlit.app/) |
+
+**Features**: 15 total | **Test**: 150 samples | **XGBoost Best** 🎯
