@@ -21,7 +21,7 @@ def load_artifacts():
 
 models, feature_names = load_artifacts()
 
-st.title("🚀 Dow Jones Stock Prediction")
+st.title("Dow Jones Stock Prediction")
 st.markdown("15 features | 6 models | Live demo")
 
 st.sidebar.header("📁 Data")
@@ -31,7 +31,7 @@ uploaded_file = st.sidebar.file_uploader("Upload CSV", type="csv")
 try:
     demo_df = pd.read_csv("test_data.csv")
     csv_data = demo_df.to_csv(index=False)
-    st.sidebar.download_button("📥 Download test_data.csv", csv_data, "test_data.csv", "text/csv")
+    st.sidebar.download_button("Download test_data.csv", csv_data, "test_data.csv", "text/csv")
 except:
     st.sidebar.info("ℹ️ Run training script first")
 
@@ -47,7 +47,7 @@ if df_test is None:
     st.warning("Upload CSV or run training!")
     st.stop()
 
-st.success(f"✅ Loaded {len(df_test)} rows")
+
 st.dataframe(df_test.head())
 
 # Clean existing columns only
@@ -70,7 +70,7 @@ target_col = "percent_change_next_weeks_price"
 if target_col in df_test.columns:
     df_test = df_test.dropna(subset=[target_col])
     y_true = (df_test[target_col] > 0).astype(int)
-    st.success("✅ Target column found")
+    
 else:
     y_true = None
     st.warning("⚠️ No target column - predictions only")
@@ -83,7 +83,7 @@ if "stock" in df_test.columns:
 # **CRITICAL**: Exact feature alignment
 X_test = df_encoded.reindex(columns=feature_names, fill_value=0)
 
-st.success(f"✅ Features aligned: {X_test.shape[1]} (matches training)")
+
 
 # Predict
 model = models[model_name]
@@ -91,7 +91,7 @@ y_pred = model.predict(X_test)
 y_proba = model.predict_proba(X_test)[:, 1]
 
 # Show predictions
-st.subheader("🔮 Predictions (Last 10)")
+st.subheader("1. Predictions (Last 10)")
 pred_df = pd.DataFrame({
     "Predicted (1=Up)": y_pred[-10:],
     "Probability Up": np.round(y_proba[-10:], 3)
@@ -102,7 +102,7 @@ st.dataframe(pred_df)
 
 # Metrics (SAFE length check)
 if y_true is not None and len(y_true) == len(y_pred):
-    st.subheader("📈 Model Performance")
+    st.subheader("2. Model Performance")
     metrics_dict = {
         "Accuracy": accuracy_score(y_true, y_pred),
         "AUC-ROC": roc_auc_score(y_true, y_proba),
@@ -121,7 +121,7 @@ if y_true is not None and len(y_true) == len(y_pred):
 
 
     # Confusion Matrix
-    st.subheader("📊 Confusion Matrix")
+    st.subheader("3. Confusion Matrix")
     cm = confusion_matrix(y_true, y_pred)
     fig, ax = plt.subplots(figsize=(6, 5))
     sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", cbar=True,
@@ -130,10 +130,9 @@ if y_true is not None and len(y_true) == len(y_pred):
     st.pyplot(fig)
 
     # Classification Report
-    st.subheader("📋 Detailed Report")
+    st.subheader("4. Detailed Report")
     st.code(classification_report(y_true, y_pred, target_names=["Down (0)", "Up (1)"]))
 else:
     st.info("➕ Add `percent_change_next_weeks_price` column for full metrics")
 
 st.markdown("---")
-st.caption(f"**Training Features** ({len(feature_names)}): {', '.join(feature_names[:5])}...")
