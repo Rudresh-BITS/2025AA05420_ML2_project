@@ -130,7 +130,7 @@ readme = f"""# Dow Jones ML Models
 for name, m in metrics.items():
     readme += f"| {name.replace('_',' ').title()} | {m['accuracy']:.3f} | {m['auc']:.3f} | {m['precision']:.3f} | {m['recall']:.3f} | {m['f1']:.3f} | {m['mcc']:.3f} |\n"
 
-readme += "| Streamlit App | [LIVE LINK] |"
+
 
 with open("README.md", "w") as f: 
     f.write(readme)
