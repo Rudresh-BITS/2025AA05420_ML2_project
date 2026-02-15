@@ -24,9 +24,9 @@ warnings.filterwarnings("ignore")
 
 # YOUR SETTINGS
 REPO_NAME = "2025AA05420_ML2_project"
-GITHUB_RAW_URL = "https://raw.githubusercontent.com/Rudresh-BITS/2025AA05420_ML2_project/main/dow_jones_index.csv"
-GIT_USERNAME = "Rudresh-BITS"
-GIT_EMAIL = "2025aa05420@wilp.bits-pilani.ac.in"
+GITHUB_RAW_URL = "https://raw.githubusercontent.com/Rukifuru/2025AA05420_ML2_project/main/dow_jones_index.csv"
+GIT_USERNAME = "Rukifuru"
+GIT_EMAIL = "dutta.rudresh@gmail.com"
 REPO_URL = f"https://github.com/{GIT_USERNAME}/{REPO_NAME}.git"
 
 print("🚀 ML Assignment Pipeline - Git FIXED!")
@@ -134,7 +134,7 @@ except:
 subprocess.run(["git", "remote", "add", "origin", REPO_URL])
 
 # **FIXED: Use subprocess.run() with your PAT URL**
-PAT_URL = "https://Rudresh-BITS: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@github.com/Rudresh-BITS/2025AA05420_ML2_project.git"
+PAT_URL = "https://Rudresh-BITS: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@github.com/Rudresh-BITS/2025AA05420_ML2_project.git"
 
 print("🚀 Pushing to GitHub...")
 result = subprocess.run(["git", "remote", "set-url", "origin", PAT_URL], check=True)
