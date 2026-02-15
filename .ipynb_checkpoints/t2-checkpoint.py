@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-FIXED: Safe Git handling + existing repo support
+FIXED: Max 16 features + NO 'stock' KeyError
 """
 
 import pandas as pd
@@ -29,9 +29,9 @@ GIT_USERNAME = "Rukifuru"
 GIT_EMAIL = "dutta.rudresh@gmail.com"
 REPO_URL = f"https://github.com/{GIT_USERNAME}/{REPO_NAME}.git"
 
-print("🚀 ML Assignment Pipeline - Git FIXED!")
+print("🚀 ML Assignment Pipeline - MAX 16 FEATURES (FIXED!)")
 
-# 1. LOAD + TRAIN (already working!)
+# 1. LOAD + PREPROCESS
 print("📥 Loading data...")
 df = pd.read_csv(GITHUB_RAW_URL)
 
@@ -49,19 +49,50 @@ for col in numeric_cols:
 df = df.dropna(subset=["percent_change_next_weeks_price"])
 df["target_up"] = (df["percent_change_next_weeks_price"] > 0).astype(int)
 
+# BASE FEATURES (11 max)
 feature_cols = ["quarter","open","high","low","close","volume","percent_change_price","percent_change_volume_over_last_wk","previous_weeks_volume","days_to_next_dividend","percent_return_next_dividend"]
 feature_cols = [c for c in feature_cols if c in df.columns]
 df[feature_cols] = df[feature_cols].fillna(df[feature_cols].median())
 
+print(f"📊 Base features: {len(feature_cols)}")
+
+# **LIMIT TO 16 TOTAL** - Top 5 stocks
 df_encoded = pd.get_dummies(df, columns=["stock"], drop_first=True)
-stock_features = [c for c in df_encoded if c.startswith("stock_")]
-X = df_encoded[feature_cols + stock_features]
-y = df_encoded["target_up"]
+all_stock_features = [c for c in df_encoded if c.startswith("stock_")]
 
+top_stocks = df['stock'].value_counts().head(5).index
+top_stock_features = [f"stock_{s}" for s in top_stocks if f"stock_{s}" in all_stock_features]
+print(f"🏢 Top stocks: {top_stocks.tolist()} ({len(top_stock_features)} dummies)")
+
+selected_features = feature_cols + top_stock_features[:5]
+print(f"🎯 Features ({len(selected_features)}): {selected_features}")
+
+# X with ONLY selected features (missing dummies auto-filled with 0)
+X = df_encoded.reindex(columns=selected_features, fill_value=0)
+y = df["target_up"]  # Use original df (index aligned)
+
+print(f"✅ X shape: {X.shape}")
+
+# Save feature names
+with open("feature_names.pkl", "wb") as f:
+    pickle.dump(selected_features, f)
+
+# 80/20 SPLIT
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
-X_test.to_csv("test_data.csv", index=False)
+print(f"📈 Train/Test: {X_train.shape}/{X_test.shape}")
 
-# Train models (already working)
+# **FIXED test_data.csv** - Base cols + target ONLY (no stock column needed)
+test_save_cols = [c for c in feature_cols if c in df.columns] + ["percent_change_next_weeks_price"]
+if len(test_save_cols) > 0:
+    # Reset index to match original order for target lookup
+    test_df = df.loc[X_test.index][test_save_cols].reset_index(drop=True)
+    test_df.to_csv("test_data.csv", index=False)
+    print(f"💾 test_data.csv saved ({len(test_save_cols)} cols)")
+else:
+    print("⚠️ No test cols - creating empty")
+    pd.DataFrame().to_csv("test_data.csv", index=False)
+
+# Train models
 models = {
     "logistic_regression": LogisticRegression(random_state=42, max_iter=1000),
     "decision_tree": DecisionTreeClassifier(random_state=42),
@@ -89,62 +120,48 @@ for name, model in models.items():
     }
 
 # README
-readme = f"""# Dow Jones ML Models
+readme = f"""# Dow Jones ML Models (≤16 Features)
 
 ## Metrics
 | Model | Acc | AUC | Prec | Rec | F1 | MCC |
 |-------|----|-----|------|-----|----|-----|
 """
 for name, m in metrics.items():
-    readme += f"| {name.replace('_',' ').title()} | {m['accuracy']:.3f} | {m['auc']:.3f} | {m['precision']:.3f} | {m['recall']:.3f} | {m['f1']:.3f} | {m['mcc']:.3f} |\n"
-readme += "| Streamlit App | [LIVE LINK] |"
+    readme += f"| {name.replace('_',' ').title()} | {m['accuracy']:.3f} | {m['auc']:.3f} | {m['precision']:.3f} | {m['recall']:.3f} | {m['f1']:.3f} | {m['mcc']:.3f} |\\n"
+readme += f"| Streamlit App | [LIVE LINK] |\n\n**Features**: {len(selected_features)} total"
 
 with open("README.md", "w") as f: f.write(readme)
 
-print("✅ Models + test_data.csv + README ready!")
+print("✅ FIXED: Models + test_data.csv + feature_names.pkl ready!")
 
-# 6. BULLETPROOF GIT (handles master/main)
-print("🐙 BULLETPROOF Git setup...")
-
-# Global config
+# GIT (unchanged)
+print("🐙 Git setup...")
 subprocess.run(["git", "config", "--global", "user.name", GIT_USERNAME])
 subprocess.run(["git", "config", "--global", "user.email", GIT_EMAIL])
 
-# Safe git init
 if not os.path.exists(".git"):
     subprocess.run(["git", "init"])
 
-# Rename to main if on master
 result = subprocess.run(["git", "branch", "--show-current"], capture_output=True, text=True)
-current_branch = result.stdout.strip()
-if current_branch == "master":
+if result.stdout.strip() == "master":
     subprocess.run(["git", "branch", "-M", "main"])
-    print("✅ Renamed master → main")
 
-# Add/commit
 subprocess.run(["git", "add", "."])
-subprocess.run(["git", "commit", "-m", f"Update models + metrics {pd.Timestamp.now()}"])
+subprocess.run(["git", "commit", "-m", f"Fixed 16-features + no KeyError {pd.Timestamp.now()}"])
 
-# Safe remote + push
-try:
-    subprocess.run(["git", "remote", "remove", "origin"], check=False)
-except: 
-    pass
+try: subprocess.run(["git", "remote", "remove", "origin"])
+except: pass
 
 subprocess.run(["git", "remote", "add", "origin", REPO_URL])
 
-# **FIXED: Use subprocess.run() with your PAT URL**
 PAT_URL = "https://Rudresh-BITS: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@github.com/Rudresh-BITS/2025AA05420_ML2_project.git"
 
-print("🚀 Pushing to GitHub...")
+print("🚀 Pushing...")
 result = subprocess.run(["git", "remote", "set-url", "origin", PAT_URL], check=True)
-result = subprocess.run(["git", "push", "-u", "origin", "main", "--force"], 
-                       capture_output=True, text=True)
+result = subprocess.run(["git", "push", "-u", "origin", "main", "--force"], capture_output=True, text=True)
 
 if result.returncode == 0:
-    print("🎉 PUSH SUCCESS!")
-    print(f"📂 Repo: https://github.com/{GIT_USERNAME}/{REPO_NAME}")
+    print("🎉 SUCCESS!")
+    print(f"📂 https://github.com/{GIT_USERNAME}/{REPO_NAME}")
 else:
-    print("⚠️  Push warning (normal if repo empty):")
-    print(result.stderr)
-
+    print("⚠️ Push issue:", result.stderr)
