@@ -120,7 +120,7 @@ for name, model in models.items():
     }
 
 # README
-readme = f"""# Dow Jones ML Models (≤16 Features)
+readme = f"""# Dow Jones ML Models
 
 ## Metrics
 | Model | Acc | AUC | Prec | Rec | F1 | MCC |
@@ -130,7 +130,7 @@ readme = f"""# Dow Jones ML Models (≤16 Features)
 for name, m in metrics.items():
     readme += f"| {name.replace('_',' ').title()} | {m['accuracy']:.3f} | {m['auc']:.3f} | {m['precision']:.3f} | {m['recall']:.3f} | {m['f1']:.3f} | {m['mcc']:.3f} |\n"
 
-readme += "| Streamlit App | [LIVE LINK] |\n\n**Features**: {len(selected_features)} total (top stocks + base)"
+readme += "| Streamlit App | [LIVE LINK] |"
 
 with open("README.md", "w") as f: 
     f.write(readme)

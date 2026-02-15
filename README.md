@@ -1,4 +1,4 @@
-# Dow Jones ML Models (≤16 Features)
+# Dow Jones ML Models
 
 ## Metrics
 | Model | Acc | AUC | Prec | Rec | F1 | MCC |
@@ -10,5 +10,3 @@
 | Random Forest | 0.447 | 0.448 | 0.465 | 0.519 | 0.491 | -0.112 |
 | Xgboost | 0.547 | 0.578 | 0.552 | 0.623 | 0.585 | 0.090 |
 | Streamlit App | [LIVE LINK] |
-
-**Features**: {len(selected_features)} total (top stocks + base)
