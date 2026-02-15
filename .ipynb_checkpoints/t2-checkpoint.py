@@ -126,13 +126,18 @@ readme = f"""# Dow Jones ML Models (≤16 Features)
 | Model | Acc | AUC | Prec | Rec | F1 | MCC |
 |-------|----|-----|------|-----|----|-----|
 """
+
 for name, m in metrics.items():
-    readme += f"| {name.replace('_',' ').title()} | {m['accuracy']:.3f} | {m['auc']:.3f} | {m['precision']:.3f} | {m['recall']:.3f} | {m['f1']:.3f} | {m['mcc']:.3f} |\\n"
-readme += f"| Streamlit App | [LIVE LINK] |\n\n**Features**: {len(selected_features)} total"
+    readme += f"| {name.replace('_',' ').title()} | {m['accuracy']:.3f} | {m['auc']:.3f} | {m['precision']:.3f} | {m['recall']:.3f} | {m['f1']:.3f} | {m['mcc']:.3f} |\n"
 
-with open("README.md", "w") as f: f.write(readme)
+readme += "| Streamlit App | [LIVE LINK] |\n\n**Features**: {len(selected_features)} total (top stocks + base)"
 
-print("✅ FIXED: Models + test_data.csv + feature_names.pkl ready!")
+with open("README.md", "w") as f: 
+    f.write(readme)
+
+print("\n📊 ALL 6 MODEL METRICS:")
+for name, m in metrics.items():
+    print(f"{name.title()}: Acc={m['accuracy']:.3f}, AUC={m['auc']:.3f}, F1={m['f1']:.3f}")
 
 # GIT (unchanged)
 print("🐙 Git setup...")
