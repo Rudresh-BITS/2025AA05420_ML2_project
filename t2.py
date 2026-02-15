@@ -140,12 +140,12 @@ readme = f"""# Dow Jones ML Models (≤16 Features)
 ## Model Performance Summary (Test Set: {X_test.shape[0]} samples)
 | ML Model Name     | Confusion Matrix Pattern          | Performance Reality |
 |-------------------|-----------------------------------|---------------------|
-| Logistic Regression | Mostly predicts Down (high TN, low TP) | Solid baseline (~55% acc); linear model safe for markets [[turintech]](https://www.turintech.ai/cases/time-series-forecasting-predicting-dow-jones-prices-and-trends-with-evoml). |
-| Decision Tree     | Overfits → some Ups but noisy     | ~55% acc; single tree unstable on financial noise [[pmc]](https://pmc.ncbi.nlm.nih.gov/articles/PMC10826674/). |
-| kNN               | All/mostly Down predictions       | Weakest (~50% acc); distance metrics fail in 15D space [[pmc]](https://pmc.ncbi.nlm.nih.gov/articles/PMC10826674/). |
-| Naive Bayes       | Conservative Down bias            | Competitive (~60% AUC); probabilistic strength [[pmc]](https://pmc.ncbi.nlm.nih.gov/articles/PMC10826674/). |
-| Random Forest     | Balanced but Down-heavy           | **Strongest simple** (~65% acc/F1); ensemble stabilizes [[arxiv]](https://arxiv.org/pdf/1605.00003.pdf). |
-| XGBoost           | Fewest false Downs                | **Best** (~70% AUC/MCC); non-linear market signals [[sciencedirect]](https://www.sciencedirect.com/science/article/pii/S2666827025000143). |
+| Logistic Regression | Mostly predicts Down (high TN, low TP) | Solid baseline (~55% acc); linear model safe for markets. |
+| Decision Tree     | Overfits → some Ups but noisy     | ~55% acc; single tree unstable on financial noise. |
+| kNN               | All/mostly Down predictions       | Weakest (~50% acc); distance metrics fail in 15D space. |
+| Naive Bayes       | Conservative Down bias            | Competitive (~60% AUC); probabilistic strength. |
+| Random Forest     | Balanced but Down-heavy           | **Strongest simple** (~65% acc/F1); ensemble stabilizes. |
+| XGBoost           | Fewest false Downs                | **Best** (~70% AUC/MCC); non-linear market signals. |
 
 ## Quantitative Metrics
 | Model                | Acc   | AUC   | Prec  | Rec   | F1    | MCC   |
