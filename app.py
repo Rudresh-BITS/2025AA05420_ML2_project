@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import pickle
 import io
+import sklearn
 from sklearn.metrics import (accuracy_score, roc_auc_score, precision_score, 
                              recall_score, f1_score, matthews_corrcoef, 
                              confusion_matrix, classification_report)
